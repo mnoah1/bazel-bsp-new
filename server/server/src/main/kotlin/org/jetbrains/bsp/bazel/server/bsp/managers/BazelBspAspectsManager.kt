@@ -79,9 +79,11 @@ class BazelBspAspectsManager(
     val rulesetName = Language.Python.rulesetNames.firstOrNull { externalRulesetNames.contains(it) }
     return when {
       bazelRelease.major >= 8 ->
-        if (featureFlags.isPythonSupportEnabled)
+        if (featureFlags.isPythonSupportEnabled) {
           this.filterNot { it.language == Language.Python } + RulesetLanguage(rulesetName, Language.Python)
-        else this
+        } else {
+          this
+        }
       else ->
         // For bazel version < 8, python is embedded.
         this.filterNot { it.language == Language.Python } + RulesetLanguage(rulesetName, Language.Python)
