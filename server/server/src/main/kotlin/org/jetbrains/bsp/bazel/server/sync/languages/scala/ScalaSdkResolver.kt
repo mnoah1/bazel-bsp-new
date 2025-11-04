@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.server.sync.languages.scala
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import java.nio.file.Path
+import java.util.jar.JarFile
 import java.util.regex.Pattern
 
 class ScalaSdkResolver(private val bazelPathsResolver: BazelPathsResolver) {
@@ -30,7 +31,27 @@ class ScalaSdkResolver(private val bazelPathsResolver: BazelPathsResolver) {
   private fun extractVersion(path: Path): String? {
     val name = path.fileName.toString()
     val matcher = VERSION_PATTERN.matcher(name)
-    return if (matcher.matches()) matcher.group(1) else null
+    return if (matcher.matches()) matcher.group(1) else extractVersionFromJar(path)
+  }
+
+  private fun extractVersionFromJar(path: Path): String? {
+    if(!path.toString().endsWith(".jar")) {
+      return null
+    }
+
+    try {
+      JarFile(path.toFile()).use { jar ->
+        jar.manifest?.mainAttributes?.let { attributes ->
+          attributes.getValue("Bundle-Version")?.let {
+            val version = it.split("-").first()
+            return version
+          }
+        }
+      }
+    } catch (e: Exception) {
+      e.printStackTrace()
+    }
+    return null
   }
 
   private fun toBinaryVersion(version: String): String =
