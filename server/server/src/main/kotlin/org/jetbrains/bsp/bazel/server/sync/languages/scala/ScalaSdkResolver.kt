@@ -43,8 +43,10 @@ class ScalaSdkResolver(private val bazelPathsResolver: BazelPathsResolver) {
       JarFile(path.toFile()).use { jar ->
         jar.manifest?.mainAttributes?.let { attributes ->
           attributes.getValue("Bundle-Version")?.let {
-            val version = it.split("-").first()
-            return version
+            val versionMatcher = JAR_VERSION_PATTERN.matcher(it)
+            if (versionMatcher.find()) {
+              return versionMatcher.group(1)
+            }
           }
         }
       }
@@ -64,5 +66,6 @@ class ScalaSdkResolver(private val bazelPathsResolver: BazelPathsResolver) {
   companion object {
     private val VERSION_PATTERN =
       Pattern.compile("(?:processed_)?scala3?-(?:library|compiler|reflect)(?:_3)?-([.\\d]+)\\.jar")
+    private val JAR_VERSION_PATTERN = Pattern.compile("(\\d+\\.\\d+\\.\\d+)")
   }
 }
