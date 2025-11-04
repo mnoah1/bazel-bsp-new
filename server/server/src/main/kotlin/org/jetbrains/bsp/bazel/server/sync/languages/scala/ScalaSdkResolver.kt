@@ -28,10 +28,13 @@ class ScalaSdkResolver(private val bazelPathsResolver: BazelPathsResolver) {
     )
   }
 
-  private fun extractVersion(path: Path): String? {
+  private fun extractVersion(path: Path): String? =
+    extractVersionFromPath(path) ?: extractVersionFromJar(path)
+
+  private fun extractVersionFromPath(path: Path): String? {
     val name = path.fileName.toString()
-    val matcher = VERSION_PATTERN.matcher(name)
-    return if (matcher.matches()) matcher.group(1) else extractVersionFromJar(path)
+    val matcher = PATH_VERSION_PATTERN.matcher(name)
+    return if (matcher.matches()) matcher.group(1) else null
   }
 
   private fun extractVersionFromJar(path: Path): String? {
@@ -64,7 +67,7 @@ class ScalaSdkResolver(private val bazelPathsResolver: BazelPathsResolver) {
       .joinToString(".")
 
   companion object {
-    private val VERSION_PATTERN =
+    private val PATH_VERSION_PATTERN =
       Pattern.compile("(?:processed_)?scala3?-(?:library|compiler|reflect)(?:_3)?-([.\\d]+)\\.jar")
     private val JAR_VERSION_PATTERN = Pattern.compile("(\\d+\\.\\d+\\.\\d+)")
   }
