@@ -28,8 +28,7 @@ class ScalaSdkResolver(private val bazelPathsResolver: BazelPathsResolver) {
     )
   }
 
-  private fun extractVersion(path: Path): String? =
-    extractVersionFromPath(path) ?: extractVersionFromJar(path)
+  private fun extractVersion(path: Path): String? = extractVersionFromPath(path) ?: extractVersionFromJar(path)
 
   private fun extractVersionFromPath(path: Path): String? {
     val name = path.fileName.toString()
@@ -38,7 +37,7 @@ class ScalaSdkResolver(private val bazelPathsResolver: BazelPathsResolver) {
   }
 
   private fun extractVersionFromJar(path: Path): String? {
-    if(!path.toString().endsWith(".jar")) {
+    if (!path.toString().endsWith(".jar")) {
       return null
     }
 
