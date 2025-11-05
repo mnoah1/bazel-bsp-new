@@ -30,6 +30,16 @@ enum class Language(
     hashSetOf(JAVA.id),
   ),
   GO("go", hashSetOf(".go"), setOf("go_binary")),
+  TYPESCRIPT(
+    "typescript",
+    hashSetOf(".ts"),
+    targetKinds =
+      setOf(
+        "jest_test",
+        "ts_library",
+        "ts_project",
+      ),
+  ),
   ;
 
   val allNames: Set<String> = dependentNames + id
