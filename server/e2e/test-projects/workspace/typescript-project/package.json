@@ -1,0 +1,10 @@
+{
+  "name": "typescript-project",
+  "version": "1.0.0",
+  "devDependencies": {
+    "typescript": "5.2.2",
+    "jest": "29.7.0",
+    "@types/jest": "29.5.5"
+  }
+}
+
