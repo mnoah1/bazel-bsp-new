@@ -91,6 +91,13 @@ bazel_integration_test_all_versions(
     test_runner = "//server/e2e/src/main/kotlin/org/jetbrains/bsp/bazel:BazelBspRustProjectTest",
 )
 
+bazel_integration_test_all_versions(
+    name = "typescript_project_test",
+    additional_tags = ["ci-disabled"],
+    project_path = "test-projects/workspace/typescript-project",
+    test_runner = "//server/e2e/src/main/kotlin/org/jetbrains/bsp/bazel:BazelBspTypeScriptProjectTest",
+)
+
 bazel_integration_test_current_version(
     name = "android_project_test",
     additional_tags = ["ci-disabled"],

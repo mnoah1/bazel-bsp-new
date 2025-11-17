@@ -14,6 +14,7 @@ import org.jetbrains.bsp.bazel.server.sync.languages.python.PythonModule
 import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.languages.typescript.TypeScriptLanguagePlugin
 
 class LanguagePluginsService(
   val scalaLanguagePlugin: ScalaLanguagePlugin,
@@ -25,6 +26,7 @@ class LanguagePluginsService(
   val rustLanguagePlugin: RustLanguagePlugin,
   private val androidLanguagePlugin: AndroidLanguagePlugin,
   val goLanguagePlugin: GoLanguagePlugin,
+  val typeScriptLanguagePlugin: TypeScriptLanguagePlugin,
 ) {
   private val emptyLanguagePlugin: EmptyLanguagePlugin = EmptyLanguagePlugin()
 
@@ -37,6 +39,7 @@ class LanguagePluginsService(
     rustLanguagePlugin.prepareSync(targetInfos)
     androidLanguagePlugin.prepareSync(targetInfos)
     goLanguagePlugin.prepareSync(targetInfos)
+    typeScriptLanguagePlugin.prepareSync(targetInfos)
   }
 
   fun getPlugin(languages: Set<Language>): LanguagePlugin<*> =
@@ -50,6 +53,7 @@ class LanguagePluginsService(
       languages.contains(Language.PYTHON) -> pythonLanguagePlugin
       languages.contains(Language.RUST) -> rustLanguagePlugin
       languages.contains(Language.GO) -> goLanguagePlugin
+      languages.contains(Language.TYPESCRIPT) -> typeScriptLanguagePlugin
       else -> emptyLanguagePlugin
     }
 

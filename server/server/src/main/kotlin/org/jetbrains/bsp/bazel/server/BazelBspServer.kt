@@ -49,6 +49,7 @@ import org.jetbrains.bsp.bazel.server.sync.languages.python.PythonLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.languages.typescript.TypeScriptLanguagePlugin
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import org.jetbrains.bsp.protocol.FeatureFlags
 import org.jetbrains.bsp.protocol.InitializeBuildData
@@ -147,6 +148,7 @@ class BazelBspServer(
     val androidLanguagePlugin =
       AndroidLanguagePlugin(workspaceContextProvider, javaLanguagePlugin, kotlinLanguagePlugin, bazelPathsResolver)
     val goLanguagePlugin = GoLanguagePlugin(bazelPathsResolver, bspClientLogger)
+    val typeScriptLanguagePlugin = TypeScriptLanguagePlugin(bazelPathsResolver)
 
     return LanguagePluginsService(
       scalaLanguagePlugin,
@@ -158,6 +160,7 @@ class BazelBspServer(
       rustLanguagePlugin,
       androidLanguagePlugin,
       goLanguagePlugin,
+      typeScriptLanguagePlugin,
     )
   }
 
