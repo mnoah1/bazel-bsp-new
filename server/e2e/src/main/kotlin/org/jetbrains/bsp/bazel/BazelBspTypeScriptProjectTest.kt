@@ -42,7 +42,7 @@ object BazelBspTypeScriptProjectTest : BazelBspTestBaseScenario() {
         listOf("typescript"),
         emptyList(),
         BuildTargetCapabilities().also {
-          it.canCompile = false
+          it.canCompile = true
           it.canTest = true
           it.canRun = false
           it.canDebug = false
@@ -61,7 +61,7 @@ object BazelBspTypeScriptProjectTest : BazelBspTestBaseScenario() {
         listOf("typescript"),
         emptyList(),
         BuildTargetCapabilities().also {
-          it.canCompile = false
+          it.canCompile = true
           it.canTest = true
           it.canRun = false
           it.canDebug = false
