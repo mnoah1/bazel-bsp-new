@@ -23,10 +23,13 @@ def extract_typescript_info(target, ctx, **kwargs):
                 for file in data_file.files.to_list():
                     sources.append(file.path)
 
-    # Always return info for jest_test targets, even if no sources found
-    # The target should still be discoverable
     typescript_info = create_struct(
         sources = sources,
     )
 
-    return dict(typescript_target_info = typescript_info), None
+    sources_as_file_locations = [create_struct(relative_path = s, is_source = True, is_external = False) for s in sources]
+
+    return dict(
+        typescript_target_info = typescript_info,
+        sources = sources_as_file_locations,
+    ), None
