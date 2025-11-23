@@ -18,6 +18,7 @@ import org.jetbrains.bsp.bazel.server.sync.languages.python.PythonLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.languages.typescript.TypeScriptLanguagePlugin
 import org.jetbrains.bsp.bazel.workspacecontext.DefaultWorkspaceContextProvider
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -62,6 +63,7 @@ class LanguagePluginServiceTest {
     val rustLanguagePlugin = RustLanguagePlugin(bazelPathsResolver)
     val androidLanguagePlugin = AndroidLanguagePlugin(provider, javaLanguagePlugin, kotlinLanguagePlugin, bazelPathsResolver)
     val goLanguagePlugin = GoLanguagePlugin(bazelPathsResolver)
+    val typeScriptLanguagePlugin = TypeScriptLanguagePlugin(bazelPathsResolver)
     languagePluginsService =
       LanguagePluginsService(
         scalaLanguagePlugin,
@@ -73,6 +75,7 @@ class LanguagePluginServiceTest {
         rustLanguagePlugin,
         androidLanguagePlugin,
         goLanguagePlugin,
+        typeScriptLanguagePlugin,
       )
   }
 
