@@ -254,6 +254,8 @@ private class FallbackTestXmlParser(private var bspClientTestNotifier: BspClient
   data class IncompleteTestCase(
     @JacksonXmlProperty(isAttribute = true)
     val name: String,
+    @JacksonXmlProperty(isAttribute = true)
+    val classname: String? = null,
     @JacksonXmlProperty(localName = "error")
     val error: TestResultDetail? = null,
     @JacksonXmlProperty(localName = "failure")
@@ -288,7 +290,7 @@ private class FallbackTestXmlParser(private var bspClientTestNotifier: BspClient
 
     bspClientTestNotifier.startTest(suite.name, suiteTaskId)
     suite.testcase.forEach { testCase ->
-      processIncompleteInfoCase(testCase, suiteTaskId.id, suiteStatus)
+      processIncompleteInfoCase(testCase, suiteTaskId.id)
     }
     bspClientTestNotifier.finishTest(
       suite.name,
@@ -300,15 +302,7 @@ private class FallbackTestXmlParser(private var bspClientTestNotifier: BspClient
     )
   }
 
-  /**
-   * Converts a TestCase into a testStart and a testFinish events.
-   * @param testSuiteStatus - using test suite's status as test case status, because the xml one is not correct
-   */
-  private fun processIncompleteInfoCase(
-    testCase: IncompleteTestCase,
-    parentId: String,
-    testSuiteStatus: TestStatus,
-  ) {
+  private fun processIncompleteInfoCase(testCase: IncompleteTestCase, parentId: String) {
     val testCaseTaskId = TaskId(UUID.randomUUID().toString())
     testCaseTaskId.parents = listOf(parentId)
 
@@ -321,7 +315,33 @@ private class FallbackTestXmlParser(private var bspClientTestNotifier: BspClient
         else -> null
       }
 
-    val testCaseData = JUnitStyleTestCaseData(testCase.time, null, outcomeMessage, null, null)
+    // Extract the full error message content.
+    val fullOutput =
+      when {
+        testCase.error != null -> testCase.error.content
+        testCase.failure != null -> testCase.failure.content
+        testCase.skipped != null -> testCase.skipped.content
+        else -> ""
+      }
+
+    // Map the outcome into a TestStatus value.
+    val testStatusOutcome =
+      when {
+        testCase.error != null -> TestStatus.FAILED
+        testCase.failure != null -> TestStatus.FAILED
+        testCase.skipped != null -> TestStatus.SKIPPED
+        else -> TestStatus.PASSED
+      }
+
+    // Extract error type information if provided.
+    val errorType =
+      when {
+        testCase.error != null -> testCase.error.type
+        testCase.failure != null -> testCase.failure.type
+        else -> null
+      }
+
+    val testCaseData = JUnitStyleTestCaseData(testCase.time, testCase.classname, outcomeMessage, fullOutput, errorType)
 
     // In the generated xml, suite name and test case name are the same, but in the Test Console test names have
     // to be unique
@@ -330,7 +350,7 @@ private class FallbackTestXmlParser(private var bspClientTestNotifier: BspClient
     bspClientTestNotifier.finishTest(
       testCaseName,
       testCaseTaskId,
-      testSuiteStatus,
+      testStatusOutcome,
       null,
       JUnitStyleTestCaseData.DATA_KIND,
       testCaseData,

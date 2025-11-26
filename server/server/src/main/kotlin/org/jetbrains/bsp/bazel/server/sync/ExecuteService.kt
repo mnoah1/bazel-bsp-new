@@ -226,7 +226,7 @@ class ExecuteService(
             command,
             originId = params.originId,
             serverPidFuture = bepReader.serverPid,
-          ).waitAndGetResult(cancelChecker, true)
+          ).waitAndGetResult(cancelChecker, ensureAllOutputRead = true, isTestCommand = true)
       }
 
     return TestResult(result.bspStatusCode).apply {

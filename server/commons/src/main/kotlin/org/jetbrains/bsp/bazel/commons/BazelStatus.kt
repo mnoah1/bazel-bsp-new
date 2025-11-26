@@ -6,6 +6,7 @@ import ch.epfl.scala.bsp4j.StatusCode
 private const val SUCCESS_EXIT_CODE = 0
 private const val BUILD_ERROR_EXIT_CODE = 1
 private const val BAD_COMMAND_LINE_ARGUMENTS_EXIT_CODE = 2
+private const val TEST_FAILED_EXIT_CODE = 3
 private const val CANCEL_EXIT_CODE = 8
 private const val OOM_EXIT_CODE = 33
 
@@ -16,6 +17,7 @@ enum class BazelStatus {
   SUCCESS,
   BAD_COMMAND_LINE_ARGUMENTS,
   BUILD_ERROR,
+  TEST_FAILED,
   CANCEL,
   OOM_ERROR,
   FATAL_ERROR, // for other non-categorized errors
@@ -42,6 +44,17 @@ enum class BazelStatus {
         SUCCESS_EXIT_CODE, PARTIALLY_SUCCESS_WITH_KEEP_GOING -> SUCCESS
         BAD_COMMAND_LINE_ARGUMENTS_EXIT_CODE -> BAD_COMMAND_LINE_ARGUMENTS
         BUILD_ERROR_EXIT_CODE -> BUILD_ERROR
+        CANCEL_EXIT_CODE -> CANCEL
+        OOM_EXIT_CODE -> OOM_ERROR
+        else -> FATAL_ERROR
+      }
+
+    fun fromTestExitCode(exitCode: Int): BazelStatus =
+      when (exitCode) {
+        SUCCESS_EXIT_CODE -> SUCCESS
+        BUILD_ERROR_EXIT_CODE -> BUILD_ERROR
+        BAD_COMMAND_LINE_ARGUMENTS_EXIT_CODE -> BAD_COMMAND_LINE_ARGUMENTS
+        TEST_FAILED_EXIT_CODE -> TEST_FAILED
         CANCEL_EXIT_CODE -> CANCEL
         OOM_EXIT_CODE -> OOM_ERROR
         else -> FATAL_ERROR
