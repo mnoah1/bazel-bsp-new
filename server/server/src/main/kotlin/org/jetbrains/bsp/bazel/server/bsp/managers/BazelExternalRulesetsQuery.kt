@@ -11,7 +11,6 @@ import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.bzlmod.BzlmodRepoMapping
 import org.jetbrains.bsp.bazel.server.bzlmod.RepoMapping
 import org.jetbrains.bsp.bazel.server.bzlmod.rootRulesToNeededTransitiveRules
-import org.jetbrains.bsp.bazel.workspacecontext.EnabledRulesSpec
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
 import javax.xml.xpath.XPathConstants
@@ -21,12 +20,11 @@ interface BazelExternalRulesetsQuery {
   fun fetchExternalRulesetNames(cancelChecker: CancelChecker): List<String>
 }
 
-class BazelEnabledRulesetsQueryImpl(private val enabledRulesSpec: EnabledRulesSpec) : BazelExternalRulesetsQuery {
+class BazelEnabledRulesetsQueryImpl(private val enabledRules: List<String>) : BazelExternalRulesetsQuery {
   override fun fetchExternalRulesetNames(cancelChecker: CancelChecker): List<String> {
-    val specifiedRules = enabledRulesSpec.values
-    val neededTransitiveRules = specifiedRules.mapNotNull { rootRulesToNeededTransitiveRules[it] }.flatten()
+    val neededTransitiveRules = enabledRules.mapNotNull { rootRulesToNeededTransitiveRules[it] }.flatten()
 
-    return (specifiedRules + neededTransitiveRules).distinct()
+    return (enabledRules + neededTransitiveRules).distinct()
   }
 }
 
@@ -34,7 +32,7 @@ class BazelExternalRulesetsQueryImpl(
   private val bazelRunner: BazelRunner,
   private val isBzlModEnabled: Boolean,
   private val isWorkspaceEnabled: Boolean,
-  private val enabledRules: EnabledRulesSpec,
+  private val enabledRules: List<String>,
   private val bspClientLogger: BspClientLogger,
   private val repoMapping: RepoMapping,
 ) : BazelExternalRulesetsQuery {
