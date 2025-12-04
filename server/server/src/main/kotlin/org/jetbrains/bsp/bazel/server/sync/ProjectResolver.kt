@@ -26,6 +26,7 @@ import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import org.jetbrains.bsp.protocol.FeatureFlags
+import org.jetbrains.bsp.protocol.InitializeBuildData
 
 /** Responsible for querying bazel and constructing Project instance  */
 class ProjectResolver(
@@ -41,6 +42,7 @@ class ProjectResolver(
   private val bazelPathsResolver: BazelPathsResolver,
   private val bspClientLogger: BspClientLogger,
   private val featureFlags: FeatureFlags,
+  private val initializeBuildData: InitializeBuildData,
 ) {
   private suspend fun <T> measured(description: String, f: suspend () -> T): T = tracer.spanBuilder(description).useWithScope { f() }
 
@@ -60,13 +62,13 @@ class ProjectResolver(
         measured("Calculating external repository mapping") {
           calculateRepoMapping(workspaceContext, bazelRunner, bazelInfo, bspClientLogger)
         }
-
+      val enabledRules = initializeBuildData.enabledRules ?: workspaceContext.enabledRules.values
       val bazelExternalRulesetsQuery =
         BazelExternalRulesetsQueryImpl(
           bazelRunner,
           bazelInfo.isBzlModEnabled,
           bazelInfo.isWorkspaceEnabled,
-          workspaceContext.enabledRules,
+          enabledRules,
           bspClientLogger,
           repoMapping,
         )

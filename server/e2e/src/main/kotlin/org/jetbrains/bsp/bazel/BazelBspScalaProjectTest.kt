@@ -44,7 +44,7 @@ object BazelBspScalaProjectTest : BazelBspTestBaseScenario() {
       throw t
     }
 
-  override fun additionalServerInstallArguments() = arrayOf("-enabled-rules", "io_bazel_rules_scala", "rules_java", "rules_jvm")
+  override fun initializeEnabledRules(): List<String>? = listOf("io_bazel_rules_scala", "rules_java", "rules_jvm")
 
   override fun scenarioSteps(): List<BazelBspTestScenarioStep> =
     listOf(

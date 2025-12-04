@@ -96,6 +96,7 @@ class BazelBspServer(
         compilationManager = compilationManager,
         bspClientLogger = bspClientLogger,
         featureFlags = featureFlags,
+        initializeBuildData = initializeBuildData,
       )
     val bspProjectMapper =
       BspProjectMapper(
@@ -171,6 +172,7 @@ class BazelBspServer(
     compilationManager: BazelBspCompilationManager,
     bspClientLogger: BspClientLogger,
     featureFlags: FeatureFlags,
+    initializeBuildData: InitializeBuildData,
   ): ProjectProvider {
     val aspectsResolver =
       InternalAspectsResolver(
@@ -219,6 +221,7 @@ class BazelBspServer(
         bazelPathsResolver = bazelPathsResolver,
         bspClientLogger = bspClientLogger,
         featureFlags = featureFlags,
+        initializeBuildData = initializeBuildData,
       )
     val firstPhaseProjectResolver =
       FirstPhaseProjectResolver(

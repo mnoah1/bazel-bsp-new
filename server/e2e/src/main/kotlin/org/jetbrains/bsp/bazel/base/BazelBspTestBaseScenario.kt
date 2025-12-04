@@ -44,6 +44,8 @@ abstract class BazelBspTestBaseScenario {
 
   open fun additionalServerInstallArguments(): Array<String> = emptyArray()
 
+  open fun initializeEnabledRules(): List<String>? = null
+
   init {
     installServer()
   }
@@ -192,7 +194,7 @@ abstract class BazelBspTestBaseScenario {
         isRustSupportEnabled = false,
         isPropagateExportsFromDepsEnabled = false,
       )
-    initializeBuildParams.data = InitializeBuildData(featureFlags = featureFlags)
+    initializeBuildParams.data = InitializeBuildData(featureFlags = featureFlags, enabledRules = initializeEnabledRules())
 
     val bazelCache = Path(processBazelOutputWithDownloadRetry("info", "execution_root"))
     val bazelOutputBase = Path(processBazelOutput("info", "output_base"))
