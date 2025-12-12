@@ -144,6 +144,10 @@ message GoTargetInfo {
   repeated FileLocation generated_libraries = 4;
 }
 
+message TypeScriptTargetInfo {
+  repeated string sources = 1;
+}
+
 message TargetInfo {
   string id = 10;
   string kind = 20;
@@ -167,4 +171,5 @@ message TargetInfo {
   AndroidAarImportInfo android_aar_import_info = 11000;
   GoTargetInfo go_target_info = 12000;
   CToolchainInfo c_toolchain_info = 13000;
+  TypeScriptTargetInfo typescript_target_info = 14000;
 }

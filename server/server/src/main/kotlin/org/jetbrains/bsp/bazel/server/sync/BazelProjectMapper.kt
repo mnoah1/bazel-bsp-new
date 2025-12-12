@@ -955,7 +955,8 @@ class BazelProjectMapper(
           hasKnownGoSources(target) ||
           featureFlags.isRustSupportEnabled &&
           target.hasRustCrateInfo() &&
-          hasKnownRustSources(target)
+          hasKnownRustSources(target) ||
+          target.hasTypescriptTargetInfo()
       )
 
   private fun shouldImportTargetKind(kind: String, transitiveCompileTimeJarsTargetKinds: Set<String>): Boolean =

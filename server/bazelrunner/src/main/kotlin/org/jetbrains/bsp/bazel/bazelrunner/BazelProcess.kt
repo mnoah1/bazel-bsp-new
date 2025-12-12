@@ -18,7 +18,11 @@ class BazelProcess internal constructor(
   private val serverPidFuture: CompletableFuture<Long>?,
   private val finishCallback: () -> Unit = {},
 ) {
-  fun waitAndGetResult(cancelChecker: CancelChecker, ensureAllOutputRead: Boolean = false): BazelProcessResult {
+  fun waitAndGetResult(
+    cancelChecker: CancelChecker,
+    ensureAllOutputRead: Boolean = false,
+    isTestCommand: Boolean = false,
+  ): BazelProcessResult {
     return try {
       val stopwatch = Stopwatch.start()
       val outputProcessor: OutputProcessor =
@@ -39,7 +43,8 @@ class BazelProcess internal constructor(
       val exitCode = outputProcessor.waitForExit(cancelChecker, serverPidFuture, logger)
       val duration = stopwatch.stop()
       logCompletion(exitCode, duration)
-      return BazelProcessResult(outputProcessor.stdoutCollector, outputProcessor.stderrCollector, BazelStatus.fromExitCode(exitCode))
+      val bazelStatus = if (isTestCommand) BazelStatus.fromTestExitCode(exitCode) else BazelStatus.fromExitCode(exitCode)
+      return BazelProcessResult(outputProcessor.stdoutCollector, outputProcessor.stderrCollector, bazelStatus)
     } finally {
       finishCallback()
     }

@@ -26,7 +26,7 @@ object InverseSourcesQuery {
   }
 
   /**
-   * @return list of targets that contain `fileLabel` in their `srcs` attribute
+   * @return list of targets that contain `fileLabel` in their `srcs` or `data` attribute
    */
   private fun targetLabels(
     fileLabel: String,
@@ -40,7 +40,8 @@ object InverseSourcesQuery {
       bazelRunner.buildBazelCommand {
         query {
           options.addAll(consistentLabelsArg)
-          options.add("attr('srcs', $fileLabel, $packageLabel)")
+          // Check both 'srcs' and 'data' attributes to support TypeScript jest_test targets
+          options.add("attr('srcs', $fileLabel, $packageLabel) union attr('data', $fileLabel, $packageLabel)")
         }
       }
     val targetLabelsQuery =
