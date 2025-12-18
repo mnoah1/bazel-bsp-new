@@ -10,9 +10,6 @@ jobs:
     needs: [tests]
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-tags: true
-          fetch-depth: 1
       - uses: bazelbuild/setup-bazelisk@v3
         with:
           bazelisk-cache: true
