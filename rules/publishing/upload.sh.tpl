@@ -7,10 +7,13 @@ fi
 
 SONATYPE_TOKEN=$({ECHO} -n $SONATYPE_USERNAME:$SONATYPE_PASSWORD | {BASE64} -w0)
 
+echo "Uploading bundle to Sonatype Central..."
 {CURL} \
    --fail-with-body \
    --request POST \
-   --silent \
+   --show-error \
    --header "Authorization: Bearer ${SONATYPE_TOKEN}" \
    --form bundle=@{BUNDLE} \
    https://central.sonatype.com/api/v1/publisher/upload?publishingType=AUTOMATIC
+echo ""
+echo "Upload completed successfully."

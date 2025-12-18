@@ -11,6 +11,8 @@ jobs:
     needs: [tests]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
       - uses: bazelbuild/setup-bazelisk@v3
         with:
           bazelisk-cache: true
@@ -21,6 +23,11 @@ jobs:
           path: |
             ~/.cache/bazel
           key: ubuntu-latest-bazel-ci-cache
+      - name: Show version to be published
+        run: |
+          echo "Git tag: $(git describe --tags --exact-match HEAD 2>/dev/null || echo 'No exact tag found')"
+          bazel query @bazel_bsp_versions//:versions.bzl --output=build 2>/dev/null || true
+          cat $(bazel info output_base)/external/bazel_bsp_versions/versions.bzl 2>/dev/null || echo "Could not read versions.bzl"
       - name: Publish package
         run: |
           bazel run \
