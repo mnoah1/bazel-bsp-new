@@ -4,7 +4,7 @@
 
 .bazelbsp/
 .bsp/
-bazel-bazel-bsp/
+bazel-bazel-bsp
 
 .idea/*
 
