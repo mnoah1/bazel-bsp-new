@@ -20,7 +20,7 @@ def _versions(rctx):
     )
     rctx.file(
         "BUILD.bazel",
-        #content = "exports_files([\"versions.bzl\"])",
+        content = "exports_files([\"versions.bzl\"])",
     )
 
 versions = repository_rule(
