@@ -2,7 +2,10 @@ package org.jetbrains.bsp.bazel.server.sync.languages.scala
 
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
+import java.io.InputStreamReader
+import java.nio.charset.StandardCharsets
 import java.nio.file.Path
+import java.util.Properties
 import java.util.jar.JarFile
 import java.util.regex.Pattern
 
@@ -43,13 +46,13 @@ class ScalaSdkResolver(private val bazelPathsResolver: BazelPathsResolver) {
 
     try {
       JarFile(path.toFile()).use { jar ->
-        jar.manifest?.mainAttributes?.let { attributes ->
-          attributes.getValue("Bundle-Version")?.let {
-            val versionMatcher = JAR_VERSION_PATTERN.matcher(it)
-            if (versionMatcher.find()) {
-              return versionMatcher.group(1)
-            }
-          }
+        val compilerPropertiesEntry =
+          jar.entries().toList().find { it.name.endsWith("compiler.properties") }
+            ?: return null
+        jar.getInputStream(compilerPropertiesEntry).use { inputStream ->
+          val properties = Properties()
+          properties.load(InputStreamReader(inputStream, StandardCharsets.UTF_8))
+          return properties.getProperty("maven.version.number")
         }
       }
     } catch (e: Exception) {
@@ -68,6 +71,5 @@ class ScalaSdkResolver(private val bazelPathsResolver: BazelPathsResolver) {
   companion object {
     private val PATH_VERSION_PATTERN =
       Pattern.compile("(?:processed_)?scala3?-(?:library|compiler|reflect)(?:_3)?-([.\\d]+)\\.jar")
-    private val JAR_VERSION_PATTERN = Pattern.compile("(\\d+\\.\\d+\\.\\d+)")
   }
 }
