@@ -31,6 +31,7 @@ object BazelBspTypeScriptProjectTest : BazelBspTestBaseScenario() {
       listOf(
         helloTestBuildTarget(),
         exampleLibTestBuildTarget(),
+        appWebTestBuildTarget(),
       ),
     )
 
@@ -69,6 +70,25 @@ object BazelBspTypeScriptProjectTest : BazelBspTestBaseScenario() {
       )
     buildTarget.displayName = "$targetPrefix//lib:example_lib_test"
     buildTarget.baseDirectory = "file://\$WORKSPACE/lib/"
+    return buildTarget
+  }
+
+  private fun appWebTestBuildTarget(): BuildTarget {
+    val buildTarget =
+      BuildTarget(
+        BuildTargetIdentifier("$targetPrefix//webtest:app_test"),
+        listOf("test"),
+        listOf("typescript"),
+        emptyList(),
+        BuildTargetCapabilities().also {
+          it.canCompile = true
+          it.canTest = true
+          it.canRun = false
+          it.canDebug = false
+        },
+      )
+    buildTarget.displayName = "$targetPrefix//webtest:app_test"
+    buildTarget.baseDirectory = "file://\$WORKSPACE/webtest/"
     return buildTarget
   }
 
